@@ -2,28 +2,35 @@
 
 import { Download, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 
 export function ShareRouteExport({ routeName, json }) {
   async function shareRoute() {
-    const file = new File([json], `${routeName.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-route.json`, {
-      type: 'application/json'
-    })
-
-    if (navigator.canShare?.({ files: [file] })) {
-      await navigator.share({
-        title: routeName,
-        text: 'Warehouse route backup',
-        files: [file]
+    try {
+      const file = new File([json], `${routeName.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-route.json`, {
+        type: 'application/json'
       })
-      return
-    }
 
-    const url = URL.createObjectURL(file)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = file.name
-    anchor.click()
-    URL.revokeObjectURL(url)
+      if (typeof navigator !== 'undefined' && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: routeName,
+          text: 'Warehouse route backup',
+          files: [file]
+        })
+        toast.success('Route shared successfully!')
+        return
+      }
+
+      const url = URL.createObjectURL(file)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = file.name
+      anchor.click()
+      URL.revokeObjectURL(url)
+      toast.success('Route JSON downloaded successfully!')
+    } catch (err) {
+      toast.error('Failed to export route: ' + err.message)
+    }
   }
 
   return (

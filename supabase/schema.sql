@@ -71,7 +71,8 @@ create table if not exists public.order_items (
   created_by uuid references public.users(id),
   updated_by uuid references public.users(id),
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (shop_order_id, product_id)
 );
 
 create table if not exists public.scheme_configurations (

@@ -1,5 +1,6 @@
 import './globals.css'
 import { AppShell } from '@/components/layout/app-shell'
+import { Toaster } from 'sonner'
 
 export const metadata = {
   title: 'Warehouse Loading Manager',
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <AppShell>{children}</AppShell>
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   )

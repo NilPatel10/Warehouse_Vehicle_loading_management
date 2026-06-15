@@ -4,14 +4,14 @@ import { SettingsForms } from '@/components/settings/settings-forms'
 import { getSettingsData } from '@/lib/supabase/queries'
 
 export default async function SettingsPage() {
-  const { envMissing, categories, products, users, appSettings } = await getSettingsData()
+  const { envMissing, categories, products, users, appSettings, schemes } = await getSettingsData()
 
   return (
     <>
       <PageHeader title="Settings" subtitle="Products, schemes, users, backup, and app config" />
       {envMissing ? <EnvWarning /> : null}
       <section className="p-4">
-        <SettingsForms categories={categories} products={products} users={users} appSettings={appSettings} />
+        <SettingsForms categories={categories} products={products} users={users} appSettings={appSettings} schemes={schemes} />
       </section>
     </>
   )

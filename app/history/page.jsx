@@ -1,6 +1,8 @@
+import Link from 'next/link'
 import { EnvWarning } from '@/components/env-warning'
 import { PageHeader } from '@/components/layout/page-header'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { calculateRouteSummary } from '@/lib/calculations'
 import { getHistoryRoutes } from '@/lib/supabase/queries'
@@ -44,6 +46,9 @@ export default async function HistoryPage() {
                     <p className="text-[11px] text-muted-foreground">250 ml</p>
                   </div>
                 </div>
+                <Button asChild variant="outline" className="mt-3 w-full">
+                  <Link href={`/routes/${route.id}`}>View details</Link>
+                </Button>
               </CardContent>
             </Card>
           )

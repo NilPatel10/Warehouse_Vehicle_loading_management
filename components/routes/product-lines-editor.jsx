@@ -10,14 +10,29 @@ function newLine() {
   return { key: crypto.randomUUID(), productId: '', quantity: '' }
 }
 
-export function ProductLinesEditor({ products, disabled }) {
-  const [lines, setLines] = useState([newLine()])
+export function ProductLinesEditor({ products, disabled, initialItems }) {
+  const [lines, setLines] = useState(() => {
+    if (initialItems && initialItems.length > 0) {
+      return initialItems.map((item) => ({
+        key: crypto.randomUUID(),
+        productId: item.product_id,
+        quantity: String(item.quantity)
+      }))
+    }
+    return [newLine()]
+  })
   const [search, setSearch] = useState('')
 
   const filteredProducts = useMemo(() => {
     const q = search.toLowerCase()
-    return products.filter((product) => product.display_name.toLowerCase().includes(q)).slice(0, 20)
-  }, [products, search])
+    const allSelectedIds = lines.map((line) => line.productId).filter(Boolean)
+    return products
+      .filter((product) => {
+        if (allSelectedIds.includes(product.id)) return false
+        return product.display_name.toLowerCase().includes(q)
+      })
+      .slice(0, 20)
+  }, [products, search, lines])
 
   return (
     <div className="space-y-3">
@@ -47,11 +62,18 @@ export function ProductLinesEditor({ products, disabled }) {
               className="h-11 rounded-md border border-input bg-background px-3 text-sm"
             >
               <option value="">Product</option>
-              {filteredProducts.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.display_name}
-                </option>
-              ))}
+              {(() => {
+                const selectedProduct = products.find((p) => p.id === line.productId)
+                const list = [...filteredProducts]
+                if (selectedProduct && !list.some((p) => p.id === selectedProduct.id)) {
+                  list.push(selectedProduct)
+                }
+                return list.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.display_name}
+                  </option>
+                ))
+              })()}
             </select>
             <Input
               name="quantity"

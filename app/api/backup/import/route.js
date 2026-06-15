@@ -13,7 +13,8 @@ export async function POST(request) {
   for (const table of importOrder) {
     const rows = backup.tables[table] || []
     if (!rows.length) continue
-    const { error } = await supabase.from(table).upsert(rows, { onConflict: 'id' })
+    const conflictCol = table === 'app_settings' ? 'key' : 'id'
+    const { error } = await supabase.from(table).upsert(rows, { onConflict: conflictCol })
     if (error) return NextResponse.json({ error: error.message, table }, { status: 500 })
   }
 

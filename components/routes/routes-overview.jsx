@@ -1,7 +1,11 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Input } from '@/components/ui/input'
 import { calculateRouteSummary } from '@/lib/calculations'
 import { formatDate } from '@/lib/utils'
 import { statusBadgeVariant } from '@/lib/status'
@@ -45,11 +49,31 @@ function RouteRow({ route }) {
 }
 
 export function RoutesOverview({ routes }) {
+  const [search, setSearch] = useState('')
+  const [expandedItems, setExpandedItems] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('routes_overview_expanded')
+      return saved ? JSON.parse(saved) : ['draft', 'ready', 'overdue']
+    }
+    return ['draft', 'ready', 'overdue']
+  })
+
+  useEffect(() => {
+    localStorage.setItem('routes_overview_expanded', JSON.stringify(expandedItems))
+  }, [expandedItems])
+
+  const filteredRoutes = useMemo(() => {
+    const q = search.toLowerCase()
+    return routes.filter(
+      (route) => route.route_name.toLowerCase().includes(q) || route.route_date.includes(q)
+    )
+  }, [routes, search])
+
   const now = new Date()
   const today = now.toISOString().slice(0, 10)
-  const draftRoutes = routes.filter((route) => route.status === 'Draft' && route.route_date >= today)
-  const readyRoutes = routes.filter((route) => route.status === 'Ready To Load' && route.route_date >= today)
-  const overdueRoutes = routes.filter((route) => route.route_date < today && !['Dispatched', 'Dropped'].includes(route.status))
+  const draftRoutes = filteredRoutes.filter((route) => route.status === 'Draft' && route.route_date >= today)
+  const readyRoutes = filteredRoutes.filter((route) => route.status === 'Ready To Load' && route.route_date >= today)
+  const overdueRoutes = filteredRoutes.filter((route) => route.route_date < today && !['Dispatched', 'Dropped'].includes(route.status))
 
   const sections = [
     { id: 'draft', title: 'Draft routes', routes: draftRoutes },
@@ -58,7 +82,14 @@ export function RoutesOverview({ routes }) {
   ]
 
   return (
-    <Accordion type="multiple" defaultValue={['draft', 'ready', 'overdue']} className="space-y-3">
+    <div className="space-y-4">
+      <Input
+        placeholder="Filter routes by name or date (YYYY-MM-DD)..."
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        className="w-full bg-card"
+      />
+      <Accordion type="multiple" value={expandedItems} onValueChange={setExpandedItems} className="space-y-3">
       {sections.map((section) => (
         <AccordionItem key={section.id} value={section.id} className="rounded-lg border bg-card px-3">
           <AccordionTrigger className="text-base">
@@ -75,5 +106,6 @@ export function RoutesOverview({ routes }) {
         </AccordionItem>
       ))}
     </Accordion>
+    </div>
   )
 }

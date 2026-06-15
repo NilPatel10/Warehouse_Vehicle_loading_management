@@ -19,9 +19,17 @@ export async function middleware(request) {
         return request.cookies.getAll()
       },
       setAll(cookiesToSet) {
+        const rememberMe = request.cookies.get('sb-remember-me')?.value === 'true'
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
         response = NextResponse.next({ request })
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+        cookiesToSet.forEach(({ name, value, options }) => {
+          const finalOptions = { ...options }
+          if (!rememberMe) {
+            delete finalOptions.maxAge
+            delete finalOptions.expires
+          }
+          response.cookies.set(name, value, finalOptions)
+        })
       }
     }
   })
@@ -35,12 +43,20 @@ export async function middleware(request) {
 
   if (!user && pathname !== '/login') {
     const loginUrl = new URL('/login', request.url)
-    return NextResponse.redirect(loginUrl)
+    const redirectResponse = NextResponse.redirect(loginUrl)
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return redirectResponse
   }
 
   if (user && pathname === '/login') {
     const homeUrl = new URL('/add-order', request.url)
-    return NextResponse.redirect(homeUrl)
+    const redirectResponse = NextResponse.redirect(homeUrl)
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return redirectResponse
   }
 
   return response
