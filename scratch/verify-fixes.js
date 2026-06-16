@@ -352,12 +352,12 @@ async function run() {
     // Free 250ml bottles:
     const free250Enabled = p1.bottle_categories.free_250ml_enabled
     const free250PerCrate = p1.bottle_categories.free_250ml_per_crate
-    const expectedFree250 = free250Enabled ? expectedCrates * free250PerCrate : 0
+    const expectedFree250 = free250Enabled ? Math.round((15 / bPerCrate) * free250PerCrate) : 0
 
     // Free water:
     const waterPerCrate = p1.bottle_categories.water_bottles_per_crate
     const manualWaterPerCrate = fullRoute.shop_orders[0].free_water_per_crate // which is 2
-    const expectedFreeWater = expectedCrates * manualWaterPerCrate + expectedCrates * waterPerCrate
+    const expectedFreeWater = Math.round((15 / bPerCrate) * manualWaterPerCrate) + Math.round((15 / bPerCrate) * waterPerCrate)
 
     const summaryMatches = 
       orderSummary.orderedQuantity === 15 &&

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Lock, Unlock } from 'lucide-react'
+import { Unlock } from 'lucide-react'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { Badge } from '@/components/ui/badge'
 
@@ -45,7 +45,12 @@ export function RouteLockClient({ routeId, userId, timeoutSeconds = 180, childre
   }, [routeId, supabase, timeoutSeconds, userId])
 
   if (lockState.loading) {
-    return <Badge variant="secondary"><Lock /> Checking lock</Badge>
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-card p-8 text-center">
+        <span className="inline-block h-7 w-7 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <p className="text-sm font-medium text-muted-foreground">Checking edit lock…</p>
+      </div>
+    )
   }
 
   if (!lockState.canEdit) {
