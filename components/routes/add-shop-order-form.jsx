@@ -68,8 +68,19 @@ export function AddShopOrderForm({ routeId, products, disabled, editingOrder, on
             />
           </div>
           <ProductLinesEditor products={products} disabled={formDisabled} initialItems={editingOrder?.order_items} />
+
+          {/* Quantity interpretation note */}
+          <p className="rounded-md bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-3 py-2 text-xs text-amber-800 dark:text-amber-300">
+            ℹ️ <span className="font-semibold">Quantities represent individual bottles, not crates.</span> The system automatically calculates full crates and loose bottles based on the configured Bottles Per Crate value for each product&apos;s category.
+          </p>
+
+          {/* Duplicate product prevention note */}
+          <p className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+            A product can only be added once within a single shop order. Update the quantity instead of creating duplicate entries.
+          </p>
+
           <div className="space-y-2">
-            <Label htmlFor="free_water_per_crate">Free water bottle/crate</Label>
+            <Label htmlFor="free_water_per_crate">Free water bottles per crate</Label>
             <Input
               id="free_water_per_crate"
               name="free_water_per_crate"
@@ -79,6 +90,17 @@ export function AddShopOrderForm({ routeId, products, disabled, editingOrder, on
               disabled={formDisabled}
             />
           </div>
+
+          {/* Free water explanation note */}
+          <p className="rounded-md bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 px-3 py-2 text-xs text-blue-800 dark:text-blue-300">
+            💧 <span className="font-semibold">Free Water Calculation:</span> Enter how many free water bottles are given per full crate in this order. Only full crates count — loose bottles do not earn free water.
+            <br />
+            <span className="font-medium">Example:</span> 18 bottles of 2.25L (9 per crate) = 2 full crates. Water scheme = 3 → <strong>6 free water bottles</strong>.
+          </p>
+          <p className="rounded-md border border-orange-300 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/40 px-3 py-2 text-xs text-orange-800 dark:text-orange-300">
+            ⚠️ <span className="font-semibold">Important:</span> This manual water scheme is <span className="font-semibold">added on top of</span> any category-level water bonus configured in Settings → Bottle Categories → &quot;Water bottles per full crate&quot;. If that category field is non-zero, do not also enter water here — or both will count together.
+          </p>
+
           <div className="flex gap-2">
             {isEditing ? (
               <Button type="button" variant="outline" className="w-1/3" disabled={formDisabled} onClick={onCancelEdit}>

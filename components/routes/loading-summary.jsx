@@ -13,6 +13,17 @@ export function LoadingSummary({ route }) {
         <Metric label="Free water" value={summary.totals.freeWaterBottles} />
         <Metric label="Free 250 ml" value={summary.totals.free250mlBottles} />
       </div>
+
+      {/* Calculation explanation for warehouse staff */}
+      <div className="rounded-md border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40 p-3 text-xs text-blue-800 dark:text-blue-300 space-y-1">
+        <p className="font-semibold text-blue-900 dark:text-blue-200">📦 How these values are calculated</p>
+        <p><span className="font-medium">Crates</span> = Total Bottles ÷ Bottles Per Crate (rounded down). Example: 18 bottles ÷ 9 per crate = 2 full crates.</p>
+        <p><span className="font-medium">Loose</span> = Remaining bottles after full crates. Example: 15 bottles ÷ 9 per crate = 1 crate + <strong>6 loose</strong>.</p>
+        <p><span className="font-medium">Free Water</span> = Full Crates × Water Bottles Per Crate. <span className="font-medium">Priority rule:</span> if a Manual Override is entered on the order, it is used exclusively; otherwise the Category Default is used. Only full crates earn free water — loose bottles do not count.</p>
+        <p><span className="font-medium">Free 250 ml</span> = Total Bottles × Free 250ml Per Bottle Rate (configured per bottle category). Example: 18 bottles × 1 = 18 free 250ml bottles.</p>
+        <p className="pt-1 text-blue-700 dark:text-blue-400">The product table shows consolidated totals across all shops on this route.</p>
+      </div>
+
       <div className="overflow-hidden rounded-lg border bg-card">
         <div className="grid grid-cols-[minmax(130px,1.5fr)_repeat(5,minmax(64px,0.7fr))] gap-0 overflow-x-auto text-sm">
           <div className="contents font-semibold text-muted-foreground">
@@ -38,6 +49,12 @@ export function LoadingSummary({ route }) {
           <p className="p-4 text-sm text-muted-foreground">No products added yet.</p>
         ) : null}
       </div>
+
+      {/* Column legend */}
+      <p className="text-xs text-muted-foreground">
+        <span className="font-medium">Crates</span> are calculated using the configured Bottles Per Crate value for each bottle category. &nbsp;
+        <span className="font-medium">Water</span> and <span className="font-medium">250 ml</span> scheme totals are summed across all shop orders on this route.
+      </p>
     </div>
   )
 }

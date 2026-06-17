@@ -47,6 +47,14 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
           <Badge variant="secondary" className="ml-auto">{categories.length}</Badge>
         </AccordionTrigger>
         <AccordionContent className="space-y-3">
+          {/* Category configuration help note */}
+          <div className="rounded-md border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40 p-3 text-xs text-blue-800 dark:text-blue-300 space-y-1">
+            <p className="font-semibold text-blue-900 dark:text-blue-200">📦 How Bottle Category settings affect calculations</p>
+            <p><span className="font-medium">Bottles Per Crate</span> — Used to calculate full crates and loose bottles throughout the application. Example: Bottles Per Crate = 9 and Quantity = 15 → 1 full crate + 6 loose bottles. This value is used in every crate, water, and 250ml calculation.</p>
+            <p><span className="font-medium">Free 250ml Per Bottle</span> ("Free 250 ml/crate" field) — Number of free 250ml bottles given per ordered bottle of this category. Example: value = 1 means every bottle of this size earns 1 free 250ml bottle. 18 ordered → 18 free 250ml bottles.</p>
+            <p><span className="font-medium">Water/Crate for Category</span> — Category-level free water added automatically based on full crates. This is separate from the per-order manual water entry.</p>
+            <p><span className="font-medium">Active / Inactive</span> — Inactive categories and their products will not appear in shop order forms. Existing orders are not affected.</p>
+          </div>
           <Input
             placeholder="Search categories..."
             value={catSearch}
@@ -64,6 +72,14 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
           <Badge variant="secondary" className="ml-auto">{products.length}</Badge>
         </AccordionTrigger>
         <AccordionContent className="space-y-3">
+          {/* Product configuration help note */}
+          <div className="rounded-md border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40 p-3 text-xs text-amber-800 dark:text-amber-300 space-y-1">
+            <p className="font-semibold text-amber-900 dark:text-amber-200">🏷️ Product / Brand Configuration</p>
+            <p><span className="font-medium">Display Name</span> — If left blank, the system will auto-generate it as "Brand Name + Category Name" (e.g. "Coke 2.25L"). Set a custom Display Name to override this.</p>
+            <p><span className="font-medium">Category</span> — Determines the Bottles Per Crate and scheme settings for this product. Changing category will affect all future calculations for this product.</p>
+            <p><span className="font-medium">Duplicate Prevention</span> — A product can only be added once within a single shop order. If you need to change a quantity, edit the existing entry instead of adding the product again.</p>
+            <p><span className="font-medium">Active / Inactive</span> — Inactive products will not appear in new shop order forms. Existing order data is preserved.</p>
+          </div>
           <Input
             placeholder="Search products..."
             value={prodSearch}
@@ -82,8 +98,15 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
         </AccordionTrigger>
         <AccordionContent className="space-y-3">
           <p className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
-            Category forms control free 250 ml bottles and configured water-per-crate values. Manual free water bottle/crate is entered per shop order.
+            Scheme Configuration allows you to define named bonus rules that apply to categories or all products.
           </p>
+          <div className="rounded-md border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40 p-3 text-xs text-amber-800 dark:text-amber-300 space-y-1">
+            <p className="font-semibold text-amber-900 dark:text-amber-200">🎁 Scheme Types Explained</p>
+            <p><span className="font-medium">Free Water</span> — Adds free water bottles per full crate. Can be set at the category level here, or entered manually per shop order on the route edit screen.</p>
+            <p><span className="font-medium">Free 250ml</span> — Adds free 250ml bottles per ordered bottle of the linked category (when "Free 250ml enabled" is checked on the category). Example: scheme value = 1, 18 bottles ordered → 18 free 250ml bottles.</p>
+            <p><span className="font-medium">Value Per Crate / Per Bottle</span> — The number of free items given. For Water: per full crate. For 250ml: per ordered bottle.</p>
+            <p><span className="font-medium">Category</span> — Leave as "All Categories (Global)" to apply to all products, or select a specific category to restrict the scheme.</p>
+          </div>
           <Input
             placeholder="Search schemes..."
             value={schemeSearch}
@@ -137,10 +160,17 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
 
       <AccordionItem value="app" className="rounded-lg border bg-card px-3">
         <AccordionTrigger>App Settings</AccordionTrigger>
-        <AccordionContent className="space-y-3">
-          <SettingForm label="Auto-delete old history" keyName="history_auto_delete_enabled" value={settings.history_auto_delete_enabled || 'false'} />
+        <AccordionContent className="space-y-4">
+          {/* App settings explanation */}
+          <div className="rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground space-y-2">
+            <p className="font-semibold text-foreground">⚙️ Application Configuration</p>
+            <p><span className="font-medium text-foreground">Auto-delete old history</span> — Set to <code>true</code> to automatically delete routes older than the retention period when the History page is visited. Set to <code>false</code> to keep all history indefinitely. Default: <code>false</code>.</p>
+            <p><span className="font-medium text-foreground">History retention days</span> — Number of days of route history to keep. Routes with a date older than this many days will be deleted when auto-delete is enabled. Default: <code>7</code> days. <span className="text-destructive font-medium">Warning: Deleted routes cannot be recovered.</span></p>
+            <p><span className="font-medium text-foreground">Route lock timeout seconds</span> — How many seconds a user can hold the exclusive edit lock on a route before it expires and another user can take over. Default: <code>180</code> seconds (3 minutes). Increase this if staff frequently lose their lock during slow connections.</p>
+          </div>
+          <SettingForm label="Auto-delete old history (true/false)" keyName="history_auto_delete_enabled" value={settings.history_auto_delete_enabled || 'false'} />
           <SettingForm label="History retention days" keyName="history_retention_days" value={settings.history_retention_days || '7'} />
-          <SettingForm label="Route lock timeout seconds" keyName="route_lock_timeout_seconds" value={settings.route_lock_timeout_seconds || '180'} />
+          <SettingForm label="Route lock timeout (seconds)" keyName="route_lock_timeout_seconds" value={settings.route_lock_timeout_seconds || '180'} />
         </AccordionContent>
       </AccordionItem>
     </Accordion>
@@ -173,17 +203,29 @@ function CategoryForm({ category }) {
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Category name" name="category_name" value={category?.category_name} required disabled={isPending} />
         <Field label="Bottles per crate" name="bottles_per_crate" type="number" value={category?.bottles_per_crate || 1} required disabled={isPending} />
-        <Field label="Free 250 ml/crate" name="free_250ml_per_crate" type="number" value={category?.free_250ml_per_crate || 0} disabled={isPending} />
-        <Field label="Water/crate for category" name="water_bottles_per_crate" type="number" value={category?.water_bottles_per_crate || 0} disabled={isPending} />
+        <Field label="Free 250ml bottles per ordered bottle" name="free_250ml_per_crate" type="number" value={category?.free_250ml_per_crate || 0} disabled={isPending} />
+        <Field label="Water bottles per full crate (category bonus)" name="water_bottles_per_crate" type="number" value={category?.water_bottles_per_crate || 0} disabled={isPending} />
         <Field label="Display order" name="display_order" type="number" value={category?.display_order || 0} disabled={isPending} />
         <div className="flex items-center justify-between rounded-md border p-3">
           <Label>Active</Label>
           <input type="checkbox" name="is_active" defaultChecked={category?.is_active ?? true} disabled={isPending} suppressHydrationWarning />
         </div>
         <div className="flex items-center justify-between rounded-md border p-3">
-          <Label>Free 250 ml enabled</Label>
+          <Label>Free 250ml enabled</Label>
           <input type="checkbox" name="free_250ml_enabled" defaultChecked={category?.free_250ml_enabled ?? false} disabled={isPending} suppressHydrationWarning />
         </div>
+      </div>
+      {/* Field impact notes */}
+      <div className="mt-3 rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground space-y-1">
+        <p><span className="font-medium">Bottles Per Crate</span> is used to calculate full crates, loose bottles and scheme quantities throughout the application.</p>
+        <p><span className="font-medium">Free 250ml bottles per ordered bottle</span>: when "Free 250ml enabled" is checked, this many 250ml bottles are added per ordered bottle. Example: value = 1, order = 18 bottles → 18 free 250ml bottles.</p>
+        <p><span className="font-medium">Water bottles per full crate</span>: category-level automatic water bonus per full crate, separate from the per-order water entry on each shop order.</p>
+      </div>
+      <div className="mt-2 rounded-md border border-orange-300 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/40 px-3 py-2 text-xs text-orange-800 dark:text-orange-300 space-y-1">
+        <p className="font-semibold">⚠️ Avoid Double-Counting Water</p>
+        <p>The category-level <span className="font-medium">Water bottles per full crate</span> value is added automatically to every order containing products from this category.</p>
+        <p>If staff <span className="font-medium">also</span> enter a manual water scheme per shop order, <span className="font-semibold">both values will be added together</span> in the totals.</p>
+        <p>Use <span className="font-medium">one method only</span>: either configure water here at the category level (set the per-order field to 0), or always enter it manually per order (set this field to 0).</p>
       </div>
       <Button type="submit" className="mt-3 w-full" loading={upsertPending} disabled={deletePending}>
         {category ? 'Update category' : 'Add category'}
