@@ -9,7 +9,7 @@ import { useFormAction } from '@/lib/hooks/use-form-action'
 export function LoginForm({ initialError, initialMessage }) {
   const [handleSignIn, signInPending] = useFormAction(signInWithEmail, {
     loadingMessage: 'Signing in...',
-    successMessage: 'Signed in successfully!'
+    successMessage: 'Signed In'
   })
 
   return (
@@ -46,7 +46,7 @@ export function LoginForm({ initialError, initialMessage }) {
             Remember me on this device
           </Label>
         </div>
-        <Button type="submit" className="w-full" loading={signInPending}>
+        <Button type="submit" className="w-full" loading={signInPending} loadingText="Signing in">
           Sign in
         </Button>
       </form>

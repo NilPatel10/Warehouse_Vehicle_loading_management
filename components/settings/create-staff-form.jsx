@@ -9,7 +9,7 @@ import { useFormAction } from '@/lib/hooks/use-form-action'
 export function CreateStaffForm() {
   const [handleSignUp, signUpPending] = useFormAction(signUpWithEmail, {
     loadingMessage: 'Creating staff account...',
-    successMessage: 'Account created successfully!'
+    successMessage: 'Account Created'
   })
 
   return (
@@ -28,7 +28,7 @@ export function CreateStaffForm() {
           <Input id="password" name="password" type="password" placeholder="Password" autoComplete="new-password" required disabled={signUpPending} />
         </div>
       </div>
-      <Button type="submit" variant="secondary" className="w-full" loading={signUpPending}>
+      <Button type="submit" variant="secondary" className="w-full" loading={signUpPending} loadingText="Creating">
         Create staff account
       </Button>
     </form>

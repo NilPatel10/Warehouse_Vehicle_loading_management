@@ -10,7 +10,7 @@ import { useFormAction } from '@/lib/hooks/use-form-action'
 export function CreateRouteForm({ user, defaultDate }) {
   const [handleCreateRoute, isPending] = useFormAction(createRoute, {
     loadingMessage: 'Creating route...',
-    successMessage: 'Route created successfully!'
+    successMessage: 'Route Created'
   })
 
   return (
@@ -45,7 +45,7 @@ export function CreateRouteForm({ user, defaultDate }) {
           disabled={!user || isPending}
         />
       </div>
-      <Button type="submit" className="w-full" loading={isPending} disabled={!user}>
+      <Button type="submit" className="w-full" loading={isPending} loadingText="Creating" disabled={!user}>
         Create route
       </Button>
     </form>

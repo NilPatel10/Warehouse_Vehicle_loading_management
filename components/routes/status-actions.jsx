@@ -37,13 +37,13 @@ export function StatusActions({ route, disabled = false }) {
   const [activeStatus, setActiveStatus] = useState(null)
   const [handleStatusUpdate, isPending] = useFormAction(updateRouteStatus, {
     loadingMessage: 'Updating status...',
-    successMessage: 'Route status updated!',
+    successMessage: 'Route Updated',
     onSuccess: () => setActiveStatus(null)
   })
 
   const [handleRouteDelete, deletePending] = useFormAction(deleteRoute, {
     loadingMessage: 'Deleting route...',
-    successMessage: 'Route deleted successfully!'
+    successMessage: 'Route Deleted'
   })
 
   const handleStatusChange = async (status) => {
@@ -91,6 +91,7 @@ export function StatusActions({ route, disabled = false }) {
               variant={isCurrent ? 'default' : 'outline'}
               disabled={disabled || isPending || deletePending}
               loading={isBtnLoading}
+              loadingText="Updating"
               onClick={() => handleStatusChange(status)}
               className="w-full"
             >
@@ -118,6 +119,7 @@ export function StatusActions({ route, disabled = false }) {
         variant="destructive"
         disabled={disabled || isPending || deletePending}
         loading={deletePending}
+        loadingText="Deleting"
         onClick={onDeleteRoute}
         className="w-full"
       >

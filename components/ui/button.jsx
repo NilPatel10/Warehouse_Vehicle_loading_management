@@ -5,7 +5,6 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { useFormStatus } from 'react-dom'
-import { Loader2 } from 'lucide-react'
 
 const buttonVariants = cva(
   'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4',
@@ -33,7 +32,7 @@ const buttonVariants = cva(
   }
 )
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, loading, disabled, type, children, ...props }, ref) => {
+const Button = React.forwardRef(({ className, variant, size, asChild = false, loading, loadingText, disabled, type, children, ...props }, ref) => {
   const { pending } = useFormStatus()
   const isSubmit = type === 'submit' || !type
   const isLoading = loading || (pending && isSubmit)
@@ -52,8 +51,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, lo
         children
       ) : (
         <>
-          {isLoading && <Loader2 className="h-4 w-4 animate-spin text-current" />}
-          {children}
+          {isLoading && loadingText ? loadingText : children}
         </>
       )}
     </Comp>

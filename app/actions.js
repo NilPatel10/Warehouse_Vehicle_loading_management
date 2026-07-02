@@ -30,6 +30,22 @@ async function assertRouteEditLock(supabase, routeId, userId) {
   }
 }
 
+async function assertRouteEditable(supabase, routeId) {
+  const { data, error } = await supabase
+    .from('routes')
+    .select('status')
+    .eq('id', routeId)
+    .single()
+
+  if (error || !data) {
+    throw new Error('Route not found.')
+  }
+
+  if (data.status === 'Dispatched' || data.status === 'Dropped') {
+    throw new Error(`This route is ${data.status.toLowerCase()} and cannot be edited. Change status back to Draft to make changes.`)
+  }
+}
+
 export async function signInWithEmail(formData) {
   const { supabase, envMissing } = await requireServerSupabase()
   if (envMissing) return { error: 'Supabase environment variables are missing.' }
@@ -145,6 +161,7 @@ export async function addShopOrder(formData) {
   const freeWaterPerCrate = readNumber(formData, 'free_water_per_crate')
 
   try {
+    await assertRouteEditable(supabase, routeId)
     await assertRouteEditLock(supabase, routeId, user.id)
   } catch (err) {
     return { error: err.message }
@@ -242,10 +259,33 @@ export async function updateRouteStatus(formData) {
   const routeId = readText(formData, 'route_id')
   const status = readText(formData, 'status')
 
-  try {
-    await assertRouteEditLock(supabase, routeId, user.id)
-  } catch (err) {
-    return { error: err.message }
+  // Get current status of the route first
+  const { data: routeData, error: routeError } = await supabase
+    .from('routes')
+    .select('status')
+    .eq('id', routeId)
+    .single()
+
+  if (routeError || !routeData) {
+    return { error: 'Route not found.' }
+  }
+
+  const currentStatus = routeData.status
+
+  // If currently Dispatched or Dropped, the only allowed target is Draft
+  if ((currentStatus === 'Dispatched' || currentStatus === 'Dropped') && status !== 'Draft') {
+    return { error: `This route is ${currentStatus.toLowerCase()} and cannot be changed to ${status}. Revert to Draft first.` }
+  }
+
+  // If changing status back to Draft from Dispatched/Dropped, bypass edit lock assertion.
+  // Otherwise, assert edit lock.
+  const isRevertingToDraft = (currentStatus === 'Dispatched' || currentStatus === 'Dropped') && status === 'Draft'
+  if (!isRevertingToDraft) {
+    try {
+      await assertRouteEditLock(supabase, routeId, user.id)
+    } catch (err) {
+      return { error: err.message }
+    }
   }
 
   const { error } = await supabase
@@ -269,6 +309,7 @@ export async function deleteOrderItem(formData) {
   const itemId = readText(formData, 'item_id')
   
   try {
+    await assertRouteEditable(supabase, routeId)
     await assertRouteEditLock(supabase, routeId, user.id)
   } catch (err) {
     return { error: err.message }
@@ -291,6 +332,7 @@ export async function deleteShopOrder(formData) {
   const orderId = readText(formData, 'order_id')
   
   try {
+    await assertRouteEditable(supabase, routeId)
     await assertRouteEditLock(supabase, routeId, user.id)
   } catch (err) {
     return { error: err.message }
@@ -404,7 +446,10 @@ export async function deleteRoute(formData) {
 
   try {
     // Assert edit lock for safety on deletion
-    const { data: route } = await supabase.from('routes').select('route_date').eq('id', routeId).single()
+    const { data: route } = await supabase.from('routes').select('route_date, status').eq('id', routeId).single()
+    if (route && (route.status === 'Dispatched' || route.status === 'Dropped')) {
+      return { error: `This route is ${route.status.toLowerCase()} and cannot be deleted. Change status back to Draft to make changes.` }
+    }
     const today = new Date().toISOString().slice(0, 10)
     if (route && route.route_date >= today) {
       await assertRouteEditLock(supabase, routeId, user.id)

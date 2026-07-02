@@ -13,13 +13,13 @@ export function ShopOrderList({ route, editable = false, onEditOrder }) {
 
   const [handleDeleteItem, deleteItemPending] = useFormAction(deleteOrderItem, {
     loadingMessage: 'Deleting item...',
-    successMessage: 'Item deleted.',
+    successMessage: 'Item Deleted',
     onSuccess: () => setDeletingItemId(null)
   })
 
   const [handleDeleteOrder, deleteOrderPending] = useFormAction(deleteShopOrder, {
     loadingMessage: 'Deleting shop order...',
-    successMessage: 'Shop order deleted.',
+    successMessage: 'Shop Order Deleted',
     onSuccess: () => setDeletingOrderId(null)
   })
 
@@ -98,6 +98,7 @@ export function ShopOrderList({ route, editable = false, onEditOrder }) {
                           variant="ghost"
                           size="sm"
                           loading={isItemDeleting}
+                          loadingText="Deleting"
                           disabled={deleteItemPending || deleteOrderPending}
                           onClick={() => onDeleteItem(item.id)}
                         >
@@ -137,9 +138,19 @@ export function ShopOrderList({ route, editable = false, onEditOrder }) {
 
             {/* Order totals */}
             <div className="mt-3 space-y-2">
-              <div className="grid grid-cols-2 gap-2 text-center">
-                <MiniMetric label="Free water (total)" value={summary.freeWaterBottles} />
-                <MiniMetric label="Free 250 ml" value={summary.free250mlBottles} />
+              <div className="grid grid-cols-2 gap-2">
+                <MiniMetric
+                  label="Free Water"
+                  bottles={summary.freeWaterBottles}
+                  crates={summary.freeWaterCrates}
+                  loose={summary.freeWaterLoose}
+                />
+                <MiniMetric
+                  label="Free 250ml"
+                  bottles={summary.free250mlBottles}
+                  crates={summary.free250mlCrates}
+                  loose={summary.free250mlLoose}
+                />
               </div>
 
               {/* Water scheme summary footer */}
@@ -174,6 +185,7 @@ export function ShopOrderList({ route, editable = false, onEditOrder }) {
                 <Button
                   variant="destructive"
                   loading={isOrderDeleting}
+                  loadingText="Deleting"
                   disabled={deleteItemPending || deleteOrderPending}
                   onClick={() => onDeleteOrder(order.id)}
                 >
@@ -191,11 +203,13 @@ export function ShopOrderList({ route, editable = false, onEditOrder }) {
   )
 }
 
-function MiniMetric({ label, value }) {
+function MiniMetric({ label, bottles, crates, loose }) {
   return (
-    <div className="rounded-md bg-secondary p-2">
-      <p className="text-lg font-bold">{value}</p>
-      <p className="text-[11px] font-semibold text-muted-foreground">{label}</p>
+    <div className="rounded-md bg-secondary p-2 text-left">
+      <p className="text-[11px] font-semibold text-muted-foreground mb-1">{label}</p>
+      <p className="text-base font-bold leading-tight">{bottles} Bottles</p>
+      <p className="text-xs text-muted-foreground mt-0.5">{crates} Crates</p>
+      <p className="text-xs text-muted-foreground">{loose} Loose</p>
     </div>
   )
 }

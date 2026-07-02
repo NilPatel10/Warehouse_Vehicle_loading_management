@@ -16,7 +16,7 @@ export function AddShopOrderForm({ routeId, products, disabled, editingOrder, on
 
   const [handleSaveOrder, isPending] = useFormAction(addShopOrder, {
     loadingMessage: isEditing ? 'Updating shop order...' : 'Saving shop order...',
-    successMessage: isEditing ? 'Shop order updated!' : 'Shop order saved!',
+    successMessage: isEditing ? 'Shop Order Updated' : 'Shop Order Saved',
     onSuccess: () => {
       if (onCancelEdit) onCancelEdit()
       setFormKey((prev) => prev + 1)
@@ -107,7 +107,7 @@ export function AddShopOrderForm({ routeId, products, disabled, editingOrder, on
                 Cancel
               </Button>
             ) : null}
-            <Button type="submit" className="flex-1" loading={isPending} disabled={disabled}>
+            <Button type="submit" className="flex-1" loading={isPending} loadingText={isEditing ? 'Updating' : 'Saving'} disabled={disabled}>
               {isEditing ? 'Update shop order' : 'Save shop order'}
             </Button>
           </div>

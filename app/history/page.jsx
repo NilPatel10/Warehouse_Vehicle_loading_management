@@ -41,16 +41,16 @@ export default async function HistoryPage() {
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                   <div className="rounded-md bg-muted p-2">
-                    <p className="font-bold">{summary.totals.fullCrates}</p>
-                    <p className="text-[11px] text-muted-foreground">Crates</p>
+                    <p className="font-bold text-sm sm:text-base">{summary.totals.fullCrates} C</p>
+                    <p className="text-[11px] text-muted-foreground">Crates ({summary.totals.looseBottles} L)</p>
                   </div>
                   <div className="rounded-md bg-muted p-2">
-                    <p className="font-bold">{summary.totals.freeWaterBottles}</p>
-                    <p className="text-[11px] text-muted-foreground">Water</p>
+                    <p className="font-bold text-sm sm:text-base">{summary.totals.freeWaterBottles} B</p>
+                    <p className="text-[11px] text-muted-foreground">Water ({summary.totals.freeWaterCrates} C)</p>
                   </div>
                   <div className="rounded-md bg-muted p-2">
-                    <p className="font-bold">{summary.totals.free250mlBottles}</p>
-                    <p className="text-[11px] text-muted-foreground">250 ml</p>
+                    <p className="font-bold text-sm sm:text-base">{summary.totals.free250mlBottles} B</p>
+                    <p className="text-[11px] text-muted-foreground">250 ml ({summary.totals.free250mlCrates} C)</p>
                   </div>
                 </div>
                 <Button asChild variant="outline" className="mt-3 w-full">

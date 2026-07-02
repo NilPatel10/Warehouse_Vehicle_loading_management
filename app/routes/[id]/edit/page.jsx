@@ -15,6 +15,10 @@ export default async function RouteEditPage({ params }) {
   if (!user) redirect('/login')
   if (!route) notFound()
 
+  if (route.status === 'Dispatched' || route.status === 'Dropped') {
+    redirect(`/routes/${route.id}`)
+  }
+
   const activeProducts = products.filter((product) => product.is_active && product.bottle_categories?.is_active)
 
   return (

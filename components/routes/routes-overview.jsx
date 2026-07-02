@@ -36,6 +36,18 @@ function RouteRow({ route }) {
           <p className="text-[11px] text-muted-foreground">Shops</p>
         </div>
       </div>
+      <div className="mt-3 border-t pt-3 grid grid-cols-2 gap-2 text-left">
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground">Free Water</p>
+          <p className="text-sm font-bold text-foreground">{summary.totals.freeWaterBottles} Bottles</p>
+          <p className="text-xs text-muted-foreground">{summary.totals.freeWaterCrates} Crates</p>
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground">Free 250ml</p>
+          <p className="text-sm font-bold text-foreground">{summary.totals.free250mlBottles} Bottles</p>
+          <p className="text-xs text-muted-foreground">{summary.totals.free250mlCrates} Crates</p>
+        </div>
+      </div>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <Button asChild variant="outline">
           <Link href={`/routes/${route.id}`}>View</Link>

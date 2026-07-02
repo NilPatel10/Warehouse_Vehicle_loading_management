@@ -1,10 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { ProductSelect } from '@/components/routes/product-select'
 
 function newLine() {
   return { key: crypto.randomUUID(), productId: '', quantity: '' }
@@ -21,60 +21,23 @@ export function ProductLinesEditor({ products, disabled, initialItems }) {
     }
     return [newLine()]
   })
-  const [search, setSearch] = useState('')
-
-  const filteredProducts = useMemo(() => {
-    const q = search.toLowerCase()
-    const allSelectedIds = lines.map((line) => line.productId).filter(Boolean)
-    return products
-      .filter((product) => {
-        if (allSelectedIds.includes(product.id)) return false
-        return product.display_name.toLowerCase().includes(q)
-      })
-      .slice(0, 20)
-  }, [products, search, lines])
 
   return (
     <div className="space-y-3">
-      <div className="space-y-2">
-        <Label htmlFor="product-search">Search products</Label>
-        <Input
-          id="product-search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Coke 250 ml"
-          disabled={disabled}
-        />
-      </div>
       {lines.map((line, index) => (
         <div key={line.key} className="grid gap-2 rounded-lg border p-3">
           <div className="grid grid-cols-[1fr_96px_auto] gap-2">
-            <select
-              name="product_id"
+            <ProductSelect
+              products={products}
               value={line.productId}
-              onChange={(event) => {
+              onChange={(productId) => {
                 const next = [...lines]
-                next[index] = { ...line, productId: event.target.value }
+                next[index] = { ...line, productId }
                 setLines(next)
               }}
-              required
               disabled={disabled}
-              className="h-11 rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="">Product</option>
-              {(() => {
-                const selectedProduct = products.find((p) => p.id === line.productId)
-                const list = [...filteredProducts]
-                if (selectedProduct && !list.some((p) => p.id === selectedProduct.id)) {
-                  list.push(selectedProduct)
-                }
-                return list.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.display_name}
-                  </option>
-                ))
-              })()}
-            </select>
+              excludeIds={lines.map((l) => l.productId).filter((id) => id && id !== line.productId)}
+            />
             <Input
               name="quantity"
               type="number"

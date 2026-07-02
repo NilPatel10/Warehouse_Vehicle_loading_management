@@ -10,8 +10,22 @@ export function LoadingSummary({ route }) {
         <Metric label="Total bottles" value={summary.totals.orderedQuantity} />
         <Metric label="Crates" value={summary.totals.fullCrates} />
         <Metric label="Loose" value={summary.totals.looseBottles} />
-        <Metric label="Free water" value={summary.totals.freeWaterBottles} />
-        <Metric label="Free 250 ml" value={summary.totals.free250mlBottles} />
+        <Metric
+          label="Free Water Bottles"
+          value={`${summary.totals.freeWaterBottles} Bottles`}
+          subTextLines={[
+            `${summary.totals.freeWaterCrates} Crates`,
+            `${summary.totals.freeWaterLoose} Loose Bottles`
+          ]}
+        />
+        <Metric
+          label="Free 250ml Bottles"
+          value={`${summary.totals.free250mlBottles} Bottles`}
+          subTextLines={[
+            `${summary.totals.free250mlCrates} Crates`,
+            `${summary.totals.free250mlLoose} Loose Bottles`
+          ]}
+        />
       </div>
 
       {/* Calculation explanation for warehouse staff */}
@@ -44,6 +58,22 @@ export function LoadingSummary({ route }) {
               <Cell value={product.free250mlBottles} />
             </div>
           ))}
+          <div className="contents border-t">
+            <div className="p-3 font-bold text-blue-600 dark:text-blue-400">Free Water</div>
+            <Cell value={`${summary.totals.freeWaterBottles} Bottles`} strong />
+            <Cell value={`${summary.totals.freeWaterCrates} Crates`} />
+            <Cell value={`${summary.totals.freeWaterLoose} Loose`} />
+            <div className="border-t p-3 text-right text-muted-foreground">-</div>
+            <div className="border-t p-3 text-right text-muted-foreground">-</div>
+          </div>
+          <div className="contents border-t">
+            <div className="p-3 font-bold text-green-600 dark:text-green-400">Free 250ml</div>
+            <Cell value={`${summary.totals.free250mlBottles} Bottles`} strong />
+            <Cell value={`${summary.totals.free250mlCrates} Crates`} />
+            <Cell value={`${summary.totals.free250mlLoose} Loose`} />
+            <div className="border-t p-3 text-right text-muted-foreground">-</div>
+            <div className="border-t p-3 text-right text-muted-foreground">-</div>
+          </div>
         </div>
         {!summary.products.length ? (
           <p className="p-4 text-sm text-muted-foreground">No products added yet.</p>
@@ -59,11 +89,16 @@ export function LoadingSummary({ route }) {
   )
 }
 
-function Metric({ label, value }) {
+function Metric({ label, value, subTextLines = [] }) {
   return (
-    <div className="rounded-lg border bg-card p-3">
-      <p className="text-2xl font-black">{value}</p>
-      <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+    <div className="rounded-lg border bg-card p-3 flex flex-col justify-between">
+      <div>
+        <p className="text-2xl font-black leading-tight">{value}</p>
+        {subTextLines.map((line, idx) => (
+          <p key={idx} className="text-sm font-semibold text-foreground leading-tight mt-0.5">{line}</p>
+        ))}
+      </div>
+      <p className="text-xs font-semibold text-muted-foreground mt-2">{label}</p>
     </div>
   )
 }

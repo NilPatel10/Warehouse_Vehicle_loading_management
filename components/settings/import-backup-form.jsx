@@ -20,7 +20,6 @@ export function ImportBackupForm() {
     }
 
     setLoading(true)
-    const toastId = toast.loading('Importing backup JSON...')
 
     try {
       const text = await file.text()
@@ -33,16 +32,16 @@ export function ImportBackupForm() {
       })
 
       if (response.ok) {
-        toast.success('Backup imported successfully! Refreshing...', { id: toastId })
+        toast.success('Backup Imported')
         setTimeout(() => {
           window.location.reload()
         }, 1500)
       } else {
         const errData = await response.json().catch(() => ({}))
-        toast.error(errData.error || 'Backup import failed.', { id: toastId })
+        toast.error(errData.error || 'Backup import failed.')
       }
     } catch (err) {
-      toast.error('Invalid JSON file: ' + err.message, { id: toastId })
+      toast.error('Invalid JSON file: ' + err.message)
     } finally {
       setLoading(false)
     }
@@ -54,7 +53,7 @@ export function ImportBackupForm() {
         <Label htmlFor="backup">Import full backup</Label>
         <Input id="backup" name="backup" type="file" accept="application/json,.json" disabled={loading} required />
       </div>
-      <Button type="submit" variant="outline" className="w-full" loading={loading}>
+      <Button type="submit" variant="outline" className="w-full" loading={loading} loadingText="Importing">
         <Upload /> Import backup JSON
       </Button>
     </form>

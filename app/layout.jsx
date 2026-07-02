@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <AppShell>{children}</AppShell>
-        <Toaster position="top-center" richColors />
+        <Toaster position="top-center" richColors duration={1500} />
       </body>
     </html>
   )

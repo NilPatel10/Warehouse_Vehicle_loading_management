@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Unlock } from 'lucide-react'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function RouteLockClient({ routeId, userId, timeoutSeconds = 180, children }) {
   const supabase = useMemo(() => getSupabaseBrowserClient(), [])
@@ -46,9 +47,26 @@ export function RouteLockClient({ routeId, userId, timeoutSeconds = 180, childre
 
   if (lockState.loading) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-card p-8 text-center">
-        <span className="inline-block h-7 w-7 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        <p className="text-sm font-medium text-muted-foreground">Checking edit lock…</p>
+      <div className="space-y-4">
+        {/* Lock status placeholder */}
+        <Skeleton className="h-10 w-40 rounded-md" />
+
+        {/* Add shop order form card skeleton */}
+        <div className="rounded-lg border bg-card p-5 space-y-4">
+          <Skeleton className="h-5 w-36" />
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-11 w-full" />
+          </div>
+        </div>
+
+        {/* Status card skeleton */}
+        <div className="rounded-lg border bg-card p-5 space-y-3">
+          <Skeleton className="h-5 w-16" />
+          <Skeleton className="h-11 w-full rounded-md" />
+        </div>
       </div>
     )
   }
