@@ -61,7 +61,7 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
             onChange={(e) => setCatSearch(e.target.value)}
             className="mb-2"
           />
-          <CategoryForm />
+          <CategoryForm onSaveSuccess={() => setCatSearch('')} />
           {filteredCategories.map((category) => <CategoryForm key={category.id} category={category} />)}
         </AccordionContent>
       </AccordionItem>
@@ -86,7 +86,7 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
             onChange={(e) => setProdSearch(e.target.value)}
             className="mb-2"
           />
-          <ProductForm categories={categories} />
+          <ProductForm categories={categories} onSaveSuccess={() => setProdSearch('')} />
           {filteredProducts.map((product) => <ProductForm key={product.id} product={product} categories={categories} />)}
         </AccordionContent>
       </AccordionItem>
@@ -113,7 +113,7 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
             onChange={(e) => setSchemeSearch(e.target.value)}
             className="mb-2"
           />
-          <SchemeForm categories={categories} />
+          <SchemeForm categories={categories} onSaveSuccess={() => setSchemeSearch('')} />
           {filteredSchemes.map((scheme) => <SchemeForm key={scheme.id} scheme={scheme} categories={categories} />)}
         </AccordionContent>
       </AccordionItem>
@@ -177,10 +177,18 @@ export function SettingsForms({ categories, products, users, appSettings, scheme
   )
 }
 
-function CategoryForm({ category }) {
+function CategoryForm({ category, onSaveSuccess }) {
   const [handleUpsertCategory, upsertPending] = useFormAction(upsertCategory, {
     loadingMessage: category ? 'Updating category...' : 'Adding category...',
-    successMessage: category ? 'Category updated successfully!' : 'Category added successfully!'
+    successMessage: category ? 'Category updated successfully!' : 'Category added successfully!',
+    onSuccess: (result, formEl) => {
+      if (!category && formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="category_name"]')
+        if (target) target.focus()
+        if (onSaveSuccess) onSaveSuccess()
+      }
+    }
   })
 
   const [handleDeleteCategory, deletePending] = useFormAction(deleteCategory, {
@@ -239,10 +247,18 @@ function CategoryForm({ category }) {
   )
 }
 
-function ProductForm({ product, categories }) {
+function ProductForm({ product, categories, onSaveSuccess }) {
   const [handleUpsertProduct, upsertPending] = useFormAction(upsertProduct, {
     loadingMessage: product ? 'Updating product...' : 'Adding product...',
-    successMessage: product ? 'Product updated successfully!' : 'Product added successfully!'
+    successMessage: product ? 'Product updated successfully!' : 'Product added successfully!',
+    onSuccess: (result, formEl) => {
+      if (!product && formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="brand_name"]')
+        if (target) target.focus()
+        if (onSaveSuccess) onSaveSuccess()
+      }
+    }
   })
 
   const [handleDeleteProduct, deletePending] = useFormAction(deleteProduct, {
@@ -318,10 +334,18 @@ function Field({ label, name, value = '', type = 'text', required = false, disab
   )
 }
 
-function SchemeForm({ scheme, categories }) {
+function SchemeForm({ scheme, categories, onSaveSuccess }) {
   const [handleUpsertScheme, upsertPending] = useFormAction(upsertScheme, {
     loadingMessage: scheme ? 'Updating scheme...' : 'Adding scheme...',
-    successMessage: scheme ? 'Scheme updated successfully!' : 'Scheme added successfully!'
+    successMessage: scheme ? 'Scheme updated successfully!' : 'Scheme added successfully!',
+    onSuccess: (result, formEl) => {
+      if (!scheme && formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="scheme_name"]')
+        if (target) target.focus()
+        if (onSaveSuccess) onSaveSuccess()
+      }
+    }
   })
 
   const [handleDeleteScheme, deletePending] = useFormAction(deleteScheme, {

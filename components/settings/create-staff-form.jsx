@@ -9,7 +9,14 @@ import { useFormAction } from '@/lib/hooks/use-form-action'
 export function CreateStaffForm() {
   const [handleSignUp, signUpPending] = useFormAction(signUpWithEmail, {
     loadingMessage: 'Creating staff account...',
-    successMessage: 'Account Created'
+    successMessage: 'Account Created',
+    onSuccess: (result, formEl) => {
+      if (formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="full_name"]')
+        if (target) target.focus()
+      }
+    }
   })
 
   return (

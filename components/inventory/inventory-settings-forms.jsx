@@ -88,7 +88,7 @@ export function InventorySettingsForms({ categories, products, damageReasons, ap
             onChange={(e) => setCatSearch(e.target.value)}
             className="mb-2"
           />
-          <InventoryCategoryForm />
+          <InventoryCategoryForm onSaveSuccess={() => setCatSearch('')} />
           {filteredCategories.map((category) => (
             <InventoryCategoryForm key={category.id} category={category} />
           ))}
@@ -108,7 +108,7 @@ export function InventorySettingsForms({ categories, products, damageReasons, ap
             onChange={(e) => setProdSearch(e.target.value)}
             className="mb-2"
           />
-          <InventoryProductForm categories={categories} />
+          <InventoryProductForm categories={categories} onSaveSuccess={() => setProdSearch('')} />
           {filteredProducts.map((product) => (
             <InventoryProductForm key={product.id} product={product} categories={categories} />
           ))}
@@ -150,10 +150,18 @@ export function InventorySettingsForms({ categories, products, damageReasons, ap
 }
 
 // Subform for Inventory Categories
-function InventoryCategoryForm({ category }) {
+function InventoryCategoryForm({ category, onSaveSuccess }) {
   const [handleUpsert, upsertPending] = useFormAction(upsertInventoryCategory, {
     loadingMessage: category ? 'Updating category...' : 'Adding category...',
-    successMessage: 'Inventory Category Saved'
+    successMessage: 'Inventory Category Saved',
+    onSuccess: (result, formEl) => {
+      if (!category && formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="category_name"]')
+        if (target) target.focus()
+        if (onSaveSuccess) onSaveSuccess()
+      }
+    }
   })
 
   const [handleDelete, deletePending] = useFormAction(deleteInventoryCategory, {
@@ -197,10 +205,18 @@ function InventoryCategoryForm({ category }) {
 }
 
 // Subform for Inventory Products
-function InventoryProductForm({ product, categories }) {
+function InventoryProductForm({ product, categories, onSaveSuccess }) {
   const [handleUpsert, upsertPending] = useFormAction(upsertInventoryProduct, {
     loadingMessage: product ? 'Updating product...' : 'Adding product...',
-    successMessage: 'Inventory Product Saved'
+    successMessage: 'Inventory Product Saved',
+    onSuccess: (result, formEl) => {
+      if (!product && formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="brand_name"]')
+        if (target) target.focus()
+        if (onSaveSuccess) onSaveSuccess()
+      }
+    }
   })
 
   const [handleDelete, deletePending] = useFormAction(deleteInventoryProduct, {
@@ -262,7 +278,14 @@ function InventoryProductForm({ product, categories }) {
 function DamageReasonForm({ reason }) {
   const [handleUpsert, upsertPending] = useFormAction(upsertDamageReason, {
     loadingMessage: reason ? 'Updating reason...' : 'Adding reason...',
-    successMessage: 'Damage Reason Saved'
+    successMessage: 'Damage Reason Saved',
+    onSuccess: (result, formEl) => {
+      if (!reason && formEl) {
+        formEl.reset()
+        const target = formEl.querySelector('[name="reason_name"]')
+        if (target) target.focus()
+      }
+    }
   })
 
   const [handleDelete, deletePending] = useFormAction(deleteDamageReason, {

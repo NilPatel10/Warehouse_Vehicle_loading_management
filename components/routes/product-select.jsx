@@ -175,17 +175,11 @@ export function ProductSelect({ products, value, onChange, disabled = false, exc
         </button>
       </div>
 
-      {/* Hidden input to facilitate standard HTML5 validation and form submission */}
+      {/* Hidden input for form submission */}
       <input
-        type="text"
+        type="hidden"
         name="product_id"
         value={value || ''}
-        onChange={() => {}}
-        required
-        tabIndex={-1}
-        aria-hidden="true"
-        suppressHydrationWarning
-        className="sr-only"
       />
 
       {/* Dropdown Options List */}

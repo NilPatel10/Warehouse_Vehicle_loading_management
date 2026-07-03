@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { CalendarDays, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -12,6 +13,8 @@ import { useFormAction } from '@/lib/hooks/use-form-action'
 export function DamageEntryForm({ products, damageReasons, currentStock }) {
   const router = useRouter()
   const today = new Date().toISOString().slice(0, 10)
+  const formRef = useRef(null)
+  const [formKey, setFormKey] = useState(0)
 
   // Build stock map: { product_id: current_stock_bottles }
   const stockMap = Object.fromEntries(
@@ -22,12 +25,17 @@ export function DamageEntryForm({ products, damageReasons, currentStock }) {
     loadingMessage: 'Saving damage entry...',
     successMessage: 'Damage Entry Saved',
     onSuccess: (result) => {
+      setFormKey((prev) => prev + 1)
+      setTimeout(() => {
+        const firstInput = formRef.current?.querySelector('[name="transaction_date"]')
+        if (firstInput) firstInput.focus()
+      }, 0)
       if (result?.redirect) router.push(result.redirect)
     }
   })
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form ref={formRef} key={formKey} onSubmit={handleSubmit} className="space-y-5">
       {/* Warning banner */}
       <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/40 p-3">
         <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />

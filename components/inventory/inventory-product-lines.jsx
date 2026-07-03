@@ -90,10 +90,6 @@ export function InventoryProductLines({
               )}
             </div>
 
-            {/* Hidden fields for form submission */}
-            <input type="hidden" name="product_id" value={line.product_id} />
-            <input type="hidden" name={qtyFieldName} value={line.quantity} />
-
             <ProductSelect
               products={products}
               value={line.product_id}
@@ -101,6 +97,9 @@ export function InventoryProductLines({
               disabled={disabled}
               excludeIds={excludeIds}
             />
+
+            {/* Hidden field for quantity — product_id is submitted by ProductSelect above */}
+            <input type="hidden" name={qtyFieldName} value={line.quantity} />
 
             <div className="space-y-1">
               <Label className="text-xs">{qtyLabel}</Label>

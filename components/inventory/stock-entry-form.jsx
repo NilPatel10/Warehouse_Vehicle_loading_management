@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { CalendarDays } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,17 +13,24 @@ import { useFormAction } from '@/lib/hooks/use-form-action'
 export function StockEntryForm({ products }) {
   const router = useRouter()
   const today = new Date().toISOString().slice(0, 10)
+  const formRef = useRef(null)
+  const [formKey, setFormKey] = useState(0)
 
   const [handleSubmit, isPending] = useFormAction(createStockEntry, {
     loadingMessage: 'Saving stock entry...',
     successMessage: 'Stock Entry Saved',
     onSuccess: (result) => {
+      setFormKey((prev) => prev + 1)
+      setTimeout(() => {
+        const firstInput = formRef.current?.querySelector('[name="transaction_date"]')
+        if (firstInput) firstInput.focus()
+      }, 0)
       if (result?.redirect) router.push(result.redirect)
     }
   })
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form ref={formRef} key={formKey} onSubmit={handleSubmit} className="space-y-5">
       {/* Transaction Date */}
       <div className="space-y-2">
         <Label htmlFor="transaction_date" className="flex items-center gap-2">
