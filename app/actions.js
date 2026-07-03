@@ -69,7 +69,7 @@ export async function signInWithEmail(formData) {
     cookieStore.delete('sb-remember-me')
   }
 
-  return { success: true, redirect: '/add-order', message: 'Signed in successfully!' }
+  return { success: true, redirect: '/', message: 'Signed in successfully!' }
 }
 
 export async function signUpWithEmail(formData) {
